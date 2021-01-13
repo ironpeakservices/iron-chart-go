@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  iron-chart-go:
+  - apiVersion: v1
+    created: "2021-01-13T13:09:38.245143248Z"
+    digest: f2c8ec02fceb0886744b43d8eb50cbed137553310e16e49cdad786a1275c1d69
+    home: https://github.com/ironpeakservices/iron-chart-go
+    keywords:
+    - ironpeak
+    - frontend
+    - go
+    - chart
+    name: iron-chart-go
+    urls:
+    - iron-chart-go-1.0.0.tgz
+    version: 1.0.0
+generated: "2021-01-13T13:09:38.244689747Z"
