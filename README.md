@@ -3,6 +3,9 @@
 Example repository to develop a Go webservice and automatically publish to a Helm chart using security best practices on GitHub.
 Let's develop in Kubernetes too. Fork me!
 
+This recompiles your Go code when changes are detected, makes the delve Go debugger available and packs everything in a nice secure container.
+Let's develop on Kubernetes too. Fork me!
+
 ## Development
 
 ```shell
