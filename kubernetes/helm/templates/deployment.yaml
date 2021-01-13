@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  namespace: "{{ .Values.namespace }}"
+  name: "{{ .Values.name }}"
+
+  labels:
+    app: "{{ .Values.name }}"
+    owner: "{{ .Values.owner }}"
+
+spec:
+  replicas: {{ .Values.replicaCount }}
+
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+
+  strategy:
+    type: Recreate
+  
+  template:
+
+    metadata:
+
+      labels:
+        app: "{{ .Values.name }}"
+        owner: "{{ .Values.owner }}"
+
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: runtime/default
+        {{ if not .Values.developmentMode }}
+        # do not enable on Docker for Mac, since it doesn't support AppArmor
+        container.apparmor.security.beta.kubernetes.io/{{ .Values.name }}: runtime/default
+        {{ end }}
+
+    spec:
+
+      restartPolicy: Always
+
+      automountServiceAccountToken: false
+
+      containers:
+      -
+        image: "{{ .Values.image.repository }}/{{ .Values.name }}:{{ .Values.image.tag }}"
+        name: "{{ .Values.name }}"
+
+        ports:
+        -
+          name: gohttp
+          containerPort: 8080
+        {{ if .Values.developmentMode }}
+        -
+          name: godelve
+          containerPort: 4000
+        {{ end }}
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: gohttp
+          failureThreshold: 3
+          initialDelaySeconds: 60
+          periodSeconds: 3
+
+        startupProbe:
+          httpGet:
+            path: /
+            port: gohttp
+          failureThreshold: 4
+          initialDelaySeconds: 20
+          periodSeconds: 3
+        
+        resources: {}
+        
+        {{ if .Values.developmentMode }}
+        volumeMounts:
+        -
+          mountPath: /go/src/app/
+          name: {{ .Values.name }}-localdev
+          readOnly: true
+        -
+          mountPath: /cache/
+          name: {{ .Values.name }}-cache
+          readOnly: false
+        {{ end }}
+
+        resources:
+          limits:
+            cpu: 0.5
+            memory: 300Mi
+
+        securityContext:
+          readOnlyRootFilesystem: true
+          privileged: false
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: [all]
+          seccompProfile:
+            type: RuntimeDefault
+      
+      {{ if .Values.developmentMode }}
+      volumes:
+      -
+        hostPath:
+          path: {{ .Values.devWorkingDirectory }}
+        name: {{ .Values.name }}-localdev
+      -
+        emptyDir:
+          medium: Memory
+        name: {{ .Values.name }}-cache
+      {{ end }}

@@ -1,0 +1,7 @@
+name: iron-chart-go
+description: 
+version: dev
+apiVersion: v1
+keywords: ["ironpeak","frontend","go","chart"]
+sources: []
+home: https://github.com/ironpeakservices/iron-chart-go

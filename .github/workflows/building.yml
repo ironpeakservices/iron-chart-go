@@ -1,0 +1,41 @@
+name: Builds
+
+on: [pull_request]
+
+jobs:
+
+  build-go:
+    name: Compile Go
+    runs-on: ubuntu-latest
+    steps:
+    - 
+      name: Setup go
+      uses: actions/setup-go@v2
+    - 
+      name: Download Go modules
+      run: go mod download
+    - 
+      name: Compile Go code
+      run: go build -o /dev/null ./cmd/api/
+
+  build-dev:
+    name: Development
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Checkout code
+      uses: actions/checkout@v2
+    -
+      name: Docker build
+      run: make build STAGE="dev"
+
+  build-prd:
+    name: Production
+    runs-on: ubuntu-latest
+    steps:
+    -
+      name: Checkout code
+      uses: actions/checkout@v2
+    -
+      name: Docker build
+      run: make build STAGE="prd"
