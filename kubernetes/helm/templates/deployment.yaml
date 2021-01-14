@@ -86,9 +86,12 @@ spec:
         {{ end }}
 
         resources:
+          requests:
+            cpu: 0.1
+            memory: 200Mi
           limits:
-            cpu: 0.5
-            memory: 300Mi
+            cpu: 1
+            memory: 1Gi
 
         securityContext:
           readOnlyRootFilesystem: true
